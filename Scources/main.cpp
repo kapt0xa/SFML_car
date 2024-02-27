@@ -16,11 +16,11 @@ int main()
     sf::Sprite car_sprite = MakeCarSptite(car_texture);
 
     sf::CircleShape circle(100);
-    circle.setPosition(50, 50);
+    circle.setPosition(0, 0);
     circle.setFillColor(sf::Color::Green);
 
-    sf::Transform transform(std::cos(1.), -std::sin(1.), 60,
-                            std::sin(1.), std::cos(1.), 30,
+    sf::Transform transform(std::cos(1.), -std::sin(1.), 100,
+                            std::sin(1.), std::cos(1.), 100,
                             0, 0, 1);
 
     window.clear(sf::Color(255,255,255,0));
@@ -184,5 +184,7 @@ sf::Sprite MakeCarSptite(sf::RenderTexture& texture)
         rect.setFillColor(sf::Color::Black);
         texture.draw(rect);
     }
-    return sf::Sprite(texture.getTexture(), int_rect);
+    sf::Sprite result_sprite(texture.getTexture(), int_rect);
+    result_sprite.setOrigin(orig_x + 70, orig_y); //the origin is between rear wheels, in the middle of rear axis
+    return result_sprite;
 }
