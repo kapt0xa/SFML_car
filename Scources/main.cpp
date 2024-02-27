@@ -6,7 +6,7 @@
 #include <vector>
 #include <cmath>
 
-void MakeCarSptite(sf::RenderTexture& texture, sf::IntRect int_rect, sf::Sprite the_car_sprite);
+void MakeCarSptite(sf::RenderTexture& texture, sf::IntRect& int_rect, sf::Sprite& the_car_sprite);
 
 int main()
 {
@@ -39,7 +39,7 @@ int main()
     return 0;
 }
 
-void MakeCarSptite(sf::RenderTexture& texture, sf::IntRect int_rect, sf::Sprite the_car_sprite)
+void MakeCarSptite(sf::RenderTexture& texture, sf::IntRect& int_rect, sf::Sprite& the_car_sprite)
 {
     constexpr int width = 300;
     constexpr int height = 140;
@@ -48,6 +48,7 @@ void MakeCarSptite(sf::RenderTexture& texture, sf::IntRect int_rect, sf::Sprite 
 
     int_rect.width = width;
     int_rect.height = height;
+    texture.create(static_cast<unsigned>(width), static_cast<unsigned>(height));
     texture.clear(sf::Color(0, 255, 0, 0));
     {
         int line_width = 8;
