@@ -6,16 +6,14 @@
 #include <vector>
 #include <cmath>
 
-void MakeCarSptite(sf::RenderTexture& texture, sf::IntRect& int_rect, sf::Sprite& the_car_sprite);
+sf::Sprite MakeCarSptite(sf::RenderTexture& texture);
 
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML works!");
 
     sf::RenderTexture car_texture;
-    sf::IntRect car_gabarites;
-    sf::Sprite car_sprite;
-    MakeCarSptite(car_texture, car_gabarites, car_sprite);
+    sf::Sprite car_sprite = MakeCarSptite(car_texture);
 
     sf::CircleShape circle(100);
     circle.setPosition(50, 50);
@@ -39,13 +37,14 @@ int main()
     return 0;
 }
 
-void MakeCarSptite(sf::RenderTexture& texture, sf::IntRect& int_rect, sf::Sprite& the_car_sprite)
+sf::Sprite MakeCarSptite(sf::RenderTexture& texture)
 {
     constexpr int width = 300;
     constexpr int height = 140;
     constexpr int orig_x = 5;
     constexpr int orig_y = 70;
 
+    sf::IntRect int_rect;
     int_rect.width = width;
     int_rect.height = height;
     texture.create(static_cast<unsigned>(width), static_cast<unsigned>(height));
@@ -181,5 +180,5 @@ void MakeCarSptite(sf::RenderTexture& texture, sf::IntRect& int_rect, sf::Sprite
         rect.setFillColor(sf::Color::Black);
         texture.draw(rect);
     }
-    the_car_sprite = sf::Sprite(texture.getTexture(), int_rect);
+    return sf::Sprite(texture.getTexture(), int_rect);
 }
