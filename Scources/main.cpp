@@ -19,9 +19,13 @@ int main()
     circle.setPosition(50, 50);
     circle.setFillColor(sf::Color::Green);
 
+    sf::Transform transform(std::cos(1.), -std::sin(1.), 60,
+                            std::sin(1.), std::cos(1.), 30,
+                            0, 0, 1);
+
     window.clear(sf::Color(255,255,255,0));
     window.draw(circle);
-    window.draw(car_sprite);
+    window.draw(car_sprite, transform);
     window.display();
 
     while (window.isOpen())
