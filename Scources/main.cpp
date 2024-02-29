@@ -5,8 +5,38 @@
 #include <array>
 #include <vector>
 #include <cmath>
+#include <iostream>
+#include <chrono>
 
 sf::Sprite MakeCarSptite(sf::RenderTexture& texture);
+
+class InputEventParser
+{
+private:
+    int close_event_counter = 0;
+    static constexpr int max_close_requests = 10;
+    bool is_forward_pressed = false;
+    bool is_backward_pressed = false;
+    bool is_left_pressed = false;
+    bool is_right_pressed = false;
+    float throttle = 0;
+    float steering = 0;
+    bool has_update = true;
+
+    sf::RenderWindow& target_window;
+
+    void HandleKeyPressed(const sf::Event& key_pressed_event, bool is_key_pressed) noexcept;
+
+public:
+    InputEventParser(sf::RenderWindow& target_window_ref) noexcept;
+
+    void ReadEvents();
+
+    float GetThrottle() noexcept;
+    float GetSteering() noexcept;
+    bool IsClosed() noexcept;
+    bool HasUpdate() noexcept;
+};
 
 int main()
 {
@@ -28,18 +58,153 @@ int main()
     window.draw(car_sprite, transform);
     window.display();
 
+    InputEventParser event_parser(window);
+
     while (window.isOpen())
     {
-        sf::Event event;
-        while (window.pollEvent(event))
+        event_parser.ReadEvents();
+        if(event_parser.HasUpdate())
         {
-            if (event.type == sf::Event::Closed)
-                window.close();
+            std::cout << "throttle " << event_parser.GetThrottle() << " steering " << event_parser.GetSteering() << std::endl;
+        }
+        if(event_parser.IsClosed())
+        {
+            window.close();
         }
     }
 
     return 0;
 }
+
+
+//=codesep2===^^  ^^==============================================================================
+//=codesep2===vv InputEventParser implementation vv==============================================================================
+
+    void InputEventParser::HandleKeyPressed(const sf::Event& key_pressed_event, bool is_key_pressed) noexcept
+    {
+        bool is_branch_passed = true;
+        switch (key_pressed_event.key.scancode)
+        {
+
+        case sf::Keyboard::Scancode::Up:
+            {
+                is_forward_pressed = is_key_pressed;
+            }
+            break;
+
+        case sf::Keyboard::Scancode::Down:
+            {
+                is_backward_pressed = is_key_pressed;
+            }
+            break;
+
+        case sf::Keyboard::Scancode::Left:
+            {
+                is_left_pressed = is_key_pressed;
+            }
+            break;
+
+        case sf::Keyboard::Scancode::Right:
+            {
+                is_right_pressed = is_key_pressed;
+            }
+            break;
+
+        default:
+            {
+                is_branch_passed = false;
+            }
+            break;
+        }
+
+        if(is_branch_passed)
+        {
+            has_update = true;
+            throttle = (is_forward_pressed? 1 : 0) + (is_backward_pressed? -1 : 0);
+            steering = (is_left_pressed? -1 : 0) + (is_right_pressed? 1 : 0);
+        }
+
+    }
+
+    InputEventParser::InputEventParser(sf::RenderWindow& target_window_ref) noexcept
+        : target_window(target_window_ref)
+    {}
+
+    void InputEventParser::ReadEvents()
+    {
+        sf::Event event;
+        while (target_window.pollEvent(event))
+        {
+            switch (event.type)
+            {
+            case sf::Event::Closed:
+                {
+                    ++close_event_counter;
+                    if(close_event_counter > max_close_requests)
+                    {
+                        std::cerr << "close event counter overfilled" << std::endl;
+                        close_event_counter = max_close_requests;
+                    }
+                }
+                break;
+
+            case sf::Event::KeyPressed:
+                {
+                    HandleKeyPressed(event, true);
+                }
+                break;
+
+            case sf::Event::KeyReleased:
+                {
+                    HandleKeyPressed(event, false);
+                }
+                break;
+
+            default:
+                {
+
+                }
+                break;
+            }
+
+        }
+    }
+
+    float InputEventParser::GetThrottle() noexcept
+    {
+        return throttle;
+    }
+
+    float InputEventParser::GetSteering() noexcept
+    {
+
+        return steering;
+    }
+
+    bool InputEventParser::IsClosed() noexcept
+    {
+        if(close_event_counter > 0)
+        {
+            --close_event_counter;
+            return true;
+        }
+
+        return false;
+    }
+
+    bool InputEventParser::HasUpdate() noexcept
+    {
+        if(has_update)
+        {
+            has_update = false;
+            return true;
+        }
+        return false;
+    }
+
+//=codesep2===^^ InputEventParser implementation^^==============================================================================
+//=codesep2===vv  vv==============================================================================
+
 
 sf::Sprite MakeCarSptite(sf::RenderTexture& texture)
 {
