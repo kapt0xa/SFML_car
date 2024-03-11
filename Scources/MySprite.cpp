@@ -74,8 +74,8 @@ namespace my_game
 
     void MySprite::DrawSprite(sf::RenderTarget& render_target) const
     {
-        render_target.draw(sprite, sf::Transform(   rotation.real() * scale,    rotation.imag() * scale,    position.real(),
-                                                    -rotation.imag() * scale,   rotation.real() * scale,    position.imag(),
+        render_target.draw(sprite, sf::Transform(   rotation.real() * scale,   -rotation.imag() * scale,    position.real(),
+                                                    rotation.imag() * scale,   rotation.real() * scale,    position.imag(),
                                                     0, 0, 1));
     }
 
@@ -257,7 +257,7 @@ namespace my_game
             texture.draw(circle);
 
             //cockpit
-            circle.setFillColor(sf::Color::Black);
+            circle.setFillColor(glass_color);
             circle.setRadius(15);
             circle.setPosition(orig_x + 105, orig_y - 15);
             texture.draw(circle);
@@ -265,7 +265,7 @@ namespace my_game
             texture.draw(circle);
             rect.setSize(sf::Vector2f(40, 30));
             rect.setPosition(125, orig_y - 15);
-            rect.setFillColor(sf::Color::Black);
+            rect.setFillColor(glass_color);
             texture.draw(rect);
         }
         sprite = sf::Sprite(texture.getTexture(), int_rect);
